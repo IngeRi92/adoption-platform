@@ -51,6 +51,13 @@ class DogApiTests(TestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["name"], "Luna")
 
+    def test_dog_detail_endpoint_returns_shelter_data(self):
+        response = self.client.get(f"/api/dogs/{self.available_dog.id}/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["name"], "Luna")
+        self.assertEqual(response.data["shelter"]["name"], "Päikesepesa")
+
     def test_inquiries_can_be_posted(self):
         response = self.client.post(
             "/api/inquiries/",
@@ -65,3 +72,19 @@ class DogApiTests(TestCase):
 
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data["user_email"], "maria@example.com")
+
+    def test_inquiry_requires_valid_email_and_message(self):
+        response = self.client.post(
+            "/api/inquiries/",
+            {
+                "dog": self.available_dog.id,
+                "user_name": "Maria",
+                "user_email": "not-an-email",
+                "message": "",
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("user_email", response.data)
+        self.assertIn("message", response.data)

@@ -5,6 +5,7 @@ from django.db import models
 class Shelter(models.Model):
     name = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
+    country = models.CharField(max_length=100, default="Unknown")
     contact_email = models.EmailField()
     contact_phone = models.CharField(max_length=20)
     website = models.URLField(blank=True, null=True)

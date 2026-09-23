@@ -8,3 +8,5 @@ __pycache__/
 *.sqlite3
 .venv/
 .env
+/backend/media/*
+!/backend/media/.gitkeep

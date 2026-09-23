@@ -14,7 +14,7 @@ Already present in the code:
 - `Shelter`, `Dog` and `ContactFormInquiry`, committed migrations and admin registrations.
 - `/api/shelters/`, `/api/dogs/`, `/api/inquiries/` and detail routes.
 - Country, sex, size, breed and adoption-status filtering; nested shelter information on dog responses.
-- Inquiry validation, a demo seed command and fourteen API tests. All fourteen pass on an isolated SQLite test database using the existing environment (Django 5.2.17, DRF 3.18.1, django-cors-headers 4.9.0); PostgreSQL and browser integration remain unverified.
+- Inquiry validation, a demo seed command and seventeen API/media tests. All seventeen pass on an isolated SQLite test database using the existing environment (Django 5.2.17, DRF 3.18.1, django-cors-headers 4.9.0); PostgreSQL and browser integration remain unverified.
 
 ## Work requested by the PDF for MVP integration
 
@@ -22,7 +22,7 @@ Already present in the code:
 | --- | --- | --- |
 | Enable frontend API access | CORS implemented with a configurable allowlist and API-only scope; automated checks pass | Verify browser GET and inquiry POST from the actual Next.js origin; instructions are in the API contract |
 | Reconcile filters | Backend has no age filter and reads only one size value | Agreed query parameters, documented boundaries and tests for combined filters |
-| Serve dog images | No `MEDIA_ROOT`, `MEDIA_URL` or development media URL routing | Seed/upload a real image, return a usable URL and display it in the frontend; handle absent images |
+| Serve dog images | Local media storage and development serving implemented; admin upload and API image retrieval tested | Verify actual frontend image display and fallback; see [image-storage guide](../Documents/IMAGE_STORAGE.md) |
 | Reconcile Django versions | Requirements specify `>=5.1,<6.0`; migration 0002's header says `6.1.1` | Agree on a supported version, reproduce dependencies and run checks/migrations/tests under it |
 | Stabilize API contract | Baseline documented in [API_CONTRACT.md](API_CONTRACT.md); proposed decisions await team review | Review with frontend, agree on proposed changes and verify responses during integration |
 
@@ -43,7 +43,7 @@ These are architecture recommendations beyond the PDF's immediate task list:
 ## Suggested implementation order
 
 1. Agree with frontend on origin/port, age and size semantics, country values, listing visibility and the API contract. Preserve the current bare-array list response unless a coordinated change is agreed.
-2. API action restrictions and CORS are implemented and tested on SQLite. Next configure media serving and verify CORS in the actual frontend browser flow. Keep development media serving separate from the later deployment setup.
+2. API action restrictions and CORS are implemented and tested on SQLite. Development media serving is also implemented and tested. Next verify CORS and image display in the actual frontend browser flow. Keep development media serving separate from the later deployment setup.
 3. Implement agreed filter changes and validation. Add focused tests for boundaries, multiple sizes, invalid values, permission restrictions and the existing inquiry flow.
 4. Connect to the database teammate's PostgreSQL setup using the [database handoff](../Database/README.md); apply migrations and seed data. Verify the selected Django version on a clean environment and run the backend tests against PostgreSQL.
 5. Pair with frontend on search -> dog detail -> inquiry submission. Check loading/empty/error states, invalid input, missing dog IDs and image fallbacks. Verify the supplied integration issue's acceptance criteria before closing it.

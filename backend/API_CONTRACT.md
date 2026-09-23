@@ -131,7 +131,7 @@ A detail response has the following shape. A list response contains objects of t
 - `shelter` is an object containing contact information, not just an ID. `/api/shelters/` returns an array of objects with these same shelter fields; shelter list ordering is not specified.
 - `age` is currently an integer. The UI treats it as years, but age units and range boundaries need explicit team agreement before adding age search.
 - `medical_history`, `personality_traits` and `website` can be `null` or empty strings. Provide a sensible display fallback.
-- `photos` is one optional image URL value, not an array. It is `null` when no image is assigned. Image serving is not configured yet, so a non-null value is not a guarantee of a working image; use a placeholder on absent/failed images.
+- `photos` is one optional image URL value, not an array. It is `null` when no image is assigned. Local image serving is configured under `/media/` when `DEBUG=True`. Use the returned URL directly and show a placeholder on absent/failed images. See the [shared image-storage guide](../Documents/IMAGE_STORAGE.md) for uploading through admin, storage ownership and production plans.
 - Do not assume IDs start at 1 or that names are unique.
 
 ## Submit an inquiry
@@ -216,7 +216,8 @@ Frontend should implement the supported baseline or use sample data for controls
 - [ ] Frontend/backend review the proposed decisions together.
 - [x] Restrict public API actions and test blocked requests, public reads and inquiry persistence on SQLite.
 - [x] Configure API CORS and test preflight, origin restrictions, success and error responses.
-- [ ] Configure media serving and verify PostgreSQL integration.
+- [x] Configure development media serving and test admin upload, API image URLs, downloads and missing images.
+- [ ] Verify PostgreSQL integration and actual frontend image display.
 - [ ] Verify search -> detail -> inquiry against the Next.js frontend and PostgreSQL.
 
 Code references: [views](shelters/views.py), [serializers](shelters/serializers.py), [models](shelters/models.py), [routes](shelters/urls.py). Remaining work: [backend plan](BACKEND_PLAN.md).

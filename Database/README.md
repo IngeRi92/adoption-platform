@@ -85,7 +85,7 @@ Start from the existing models and migrations, not a second implementation of th
 - `Dog`: age, breed, size, sex, medical/personality information, adoption status, shelter relationship and one optional image.
 - `ContactFormInquiry`: dog relationship, optional sender name, email, message and submission timestamp.
 
-The current relationships are shelter -> many dogs -> many inquiries. Deletion currently cascades down these relationships; document and review this before using real records. `Dog.photos` currently stores one image path, despite its plural name; image files belong in media storage.
+The current relationships are shelter -> many dogs -> many inquiries. Deletion currently cascades down these relationships; document and review this before using real records. `Dog.photos` currently stores one image path, despite its plural name; image files belong in media storage. See the [agreed image-storage approach](../Documents/IMAGE_STORAGE.md) for the rationale, cost considerations, ownership and backup responsibilities.
 
 Record these decisions in `schema.md`:
 

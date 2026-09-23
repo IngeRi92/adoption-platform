@@ -23,7 +23,7 @@ Already present in the code:
 | Enable frontend API access | CORS implemented with a configurable allowlist and API-only scope; automated checks pass | Verify browser GET and inquiry POST from the actual Next.js origin; instructions are in the API contract |
 | Reconcile filters | Backend has no age filter and reads only one size value | Agreed query parameters, documented boundaries and tests for combined filters |
 | Serve dog images | Local media storage and development serving implemented; admin upload and API image retrieval tested | Verify actual frontend image display and fallback; see [image-storage guide](../Documents/IMAGE_STORAGE.md) |
-| Reconcile Django versions | Requirements specify `>=5.1,<6.0`; migration 0002's header says `6.1.1` | Agree on a supported version, reproduce dependencies and run checks/migrations/tests under it |
+| Reconcile Django versions | Python 3.14.3 and Django 5.2.17 baseline documented; all direct/transitive dependencies pinned | Fresh Windows environment installed successfully; dependency checks, model/migration checks, empty SQLite migrations, repeated seeding, API smoke check and all 17 tests pass. PostgreSQL/other platforms remain pending |
 | Stabilize API contract | Baseline documented in [API_CONTRACT.md](API_CONTRACT.md); proposed decisions await team review | Review with frontend, agree on proposed changes and verify responses during integration |
 
 CORS is required when the browser calls a different origin; the PDF's claim that every frontend request will be blocked does not apply to same-origin hosting. CORS also does not replace permissions.

@@ -14,7 +14,7 @@ Already present in the code:
 - `Shelter`, `Dog` and `ContactFormInquiry`, committed migrations and admin registrations.
 - `/api/shelters/`, `/api/dogs/`, `/api/inquiries/` and detail routes.
 - Country, sex, size, breed and adoption-status filtering; nested shelter information on dog responses.
-- Inquiry validation, a demo seed command and four API tests. These were inspected, not executed for this documentation change.
+- Inquiry validation, a demo seed command and seven API tests. All seven pass on an isolated SQLite test database using the existing environment (Django 5.2.17, DRF 3.18.1); PostgreSQL and browser integration remain unverified.
 
 ## Work requested by the PDF for MVP integration
 
@@ -34,7 +34,7 @@ The migration header alone does not prove incompatibility. Migration 0002 contai
 
 These are architecture recommendations beyond the PDF's immediate task list:
 
-1. **Restrict API access before shared use.** All three routes use `ModelViewSet`, with no project or per-view permission restrictions. Under DRF defaults this permits anonymous CRUD and exposes inquiry email/message data. For the local MVP, recommend public read-only dog/shelter endpoints and public create-only inquiries, with maintenance through authenticated Django admin. JWT can remain later work. Test that anonymous users cannot mutate listings or list/read/update/delete inquiries. See [DRF permission defaults](https://www.django-rest-framework.org/api-guide/permissions/).
+1. **API access restriction implemented.** Dogs and shelters now use read-only viewsets; inquiries use a create-only viewset. Explicit public permissions allow visitors to use those limited actions. Anonymous listing writes return 405, inquiry collection reads return 405, and inquiry detail routes are absent (404). Tests verify these restrictions, unchanged stored records and successful inquiry persistence. Maintenance remains in authenticated Django admin. JWT remains later work. See [DRF viewsets](https://www.django-rest-framework.org/api-guide/viewsets/).
 2. **Resolve the complete filter mismatch.** The frontend sends age categories `0-1`, `1-5`, `6+`, including overlapping labels at age 1, and offers `xlarge`, which the model rejects. It also gives “All Countries” the value `estonia`. Agree on age units/boundaries, size values and an empty country value for all countries. Recommended API direction: explicit `age_min`/`age_max` in whole years and repeated sizes (`size=small&size=medium`), preserving existing single-size requests. This is proposed behavior, not implemented behavior; frontend labels must match the chosen boundaries.
 3. **Define listing visibility.** The current dog queryset includes all statuses unless filtered and does not require a verified shelter. Agree whether public search defaults to available dogs and how pending/adopted dogs and unverified shelters appear in both list and detail views.
 4. **Plan the future dog-write serializer.** The nested `shelter` field is read-only, so normal API dog creation cannot provide the required relationship. When self-service is implemented, derive the shelter from the authenticated account and enforce ownership on every operation.
@@ -43,7 +43,7 @@ These are architecture recommendations beyond the PDF's immediate task list:
 ## Suggested implementation order
 
 1. Agree with frontend on origin/port, age and size semantics, country values, listing visibility and the API contract. Preserve the current bare-array list response unless a coordinated change is agreed.
-2. Implement the MVP permission restrictions, CORS configuration and media serving. Keep development media serving separate from the later deployment setup.
+2. API action restrictions are implemented and tested on SQLite. Next configure CORS and media serving. Keep development media serving separate from the later deployment setup.
 3. Implement agreed filter changes and validation. Add focused tests for boundaries, multiple sizes, invalid values, permission restrictions and the existing inquiry flow.
 4. Connect to the database teammate's PostgreSQL setup using the [database handoff](../Database/README.md); apply migrations and seed data. Verify the selected Django version on a clean environment and run the backend tests against PostgreSQL.
 5. Pair with frontend on search -> dog detail -> inquiry submission. Check loading/empty/error states, invalid input, missing dog IDs and image fallbacks. Verify the supplied integration issue's acceptance criteria before closing it.

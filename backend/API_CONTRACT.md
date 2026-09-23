@@ -10,7 +10,7 @@ An API contract tells frontend developers which URL to call, what data to send a
 - Proposed Next.js development origin: `http://localhost:3000`. Confirm the actual origin with frontend; browser calls across origins still need backend CORS configuration.
 - Use the trailing slash on every endpoint, particularly POST requests.
 - Request JSON with `Accept: application/json`. For JSON submissions, also send `Content-Type: application/json`.
-- These MVP flows do not require user registration or JWT tokens. API access restrictions are a separate pending backend task.
+- These MVP flows do not require user registration or JWT tokens. Public API actions are limited to dog/shelter reads and inquiry creation.
 - Frontend calls Django; it never receives PostgreSQL credentials or connects directly to the database.
 
 ## Supported integration endpoints
@@ -24,7 +24,9 @@ An API contract tells frontend developers which URL to call, what data to send a
 
 `{id}` means the numeric ID received from the API, not the dog's name or a hardcoded card number. List endpoints currently have no pagination wrapper: read the array itself, not `response.results`. An empty list is `[]` with status `200`.
 
-The current routers expose additional CRUD operations without explicit restrictions. Their existence is an implementation gap, not a promise for frontend use. Planned public access is dog/shelter reads and inquiry creation only; inquiry records must not become a public inbox.
+Dogs and shelters are read-only through the API, including for logged-in users. POST to their collection URLs and PUT/PATCH/DELETE to their detail URLs return `405 Method Not Allowed`. Shelter detail reads remain available at `/api/shelters/{id}/`.
+
+Inquiries support POST and OPTIONS at `/api/inquiries/`; GET/HEAD/PUT/PATCH/DELETE return `405`. There is no inquiry detail route: `/api/inquiries/{id}/` returns `404`. Manage listings and review inquiries through Django admin with the appropriate account permissions. Anonymous access restrictions and successful inquiry persistence are covered by backend tests.
 
 ## Dog search and filters
 
@@ -167,7 +169,8 @@ Frontend should implement the supported baseline or use sample data for controls
 - [x] Document the current endpoints, filters, data shapes and error handling.
 - [x] Compare the baseline with the supplied frontend integration issue.
 - [ ] Frontend/backend review the proposed decisions together.
-- [ ] Configure CORS and media serving, restrict public access, and test the implementation.
+- [x] Restrict public API actions and test blocked requests, public reads and inquiry persistence on SQLite.
+- [ ] Configure CORS and media serving and verify PostgreSQL integration.
 - [ ] Verify search -> detail -> inquiry against the Next.js frontend and PostgreSQL.
 
 Code references: [views](shelters/views.py), [serializers](shelters/serializers.py), [models](shelters/models.py), [routes](shelters/urls.py). Remaining work: [backend plan](BACKEND_PLAN.md).

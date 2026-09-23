@@ -1,0 +1,59 @@
+# Backend integration plan
+
+Based on the team leader's [task overview dated 2026-09-16](../Documents/Get%20a%20Pet%20-%20Backend%20Frontend%20Database%20Task%20Overview.pdf), checked against repository code on 2026-09-23. This is a plan, not a record of implemented changes or passing tests. References to issue #1 and the wiki below come from the PDF; their original contents were not available in this review.
+
+## Goal and existing foundation
+
+Milestone 1 is a local prototype connecting frontend, backend and database: search dogs, filter results, view details and shelter contact information, and submit an inquiry. The PDF explicitly excludes authentication, shelter dashboard, search performance tuning, email notifications and deployment from issue #1's integration scope (page 4).
+
+Already present in the code:
+
+- Django and Django REST Framework, with SQLite default and PostgreSQL configuration through environment variables.
+- `Shelter`, `Dog` and `ContactFormInquiry`, committed migrations and admin registrations.
+- `/api/shelters/`, `/api/dogs/`, `/api/inquiries/` and detail routes.
+- Country, sex, size, breed and adoption-status filtering; nested shelter information on dog responses.
+- Inquiry validation, a demo seed command and four API tests. These were inspected, not executed for this documentation change.
+
+## Work requested by the PDF for MVP integration
+
+| Task | Current gap | Completion evidence |
+| --- | --- | --- |
+| Enable frontend API access | No CORS dependency or middleware configured | Allow the agreed frontend development origins; demonstrate browser GET and inquiry POST from that origin |
+| Reconcile filters | Backend has no age filter and reads only one size value | Agreed query parameters, documented boundaries and tests for combined filters |
+| Serve dog images | No `MEDIA_ROOT`, `MEDIA_URL` or development media URL routing | Seed/upload a real image, return a usable URL and display it in the frontend; handle absent images |
+| Reconcile Django versions | Requirements specify `>=5.1,<6.0`; migration 0002's header says `6.1.1` | Agree on a supported version, reproduce dependencies and run checks/migrations/tests under it |
+| Stabilize API contract | PDF says frontend depends on issue #1 | Compare the actual issue when available; document routes, request/response examples, filter behavior and errors together with frontend |
+
+CORS is required when the browser calls a different origin; the PDF's claim that every frontend request will be blocked does not apply to same-origin hosting. CORS also does not replace permissions.
+
+The migration header alone does not prove incompatibility. Migration 0002 contains a simple `AddField`; verify it under the selected Django version rather than rewriting migration history just to change the comment.
+
+## Additional findings from the code review
+
+These are architecture recommendations beyond the PDF's immediate task list:
+
+1. **Restrict API access before shared use.** All three routes use `ModelViewSet`, with no project or per-view permission restrictions. Under DRF defaults this permits anonymous CRUD and exposes inquiry email/message data. For the local MVP, recommend public read-only dog/shelter endpoints and public create-only inquiries, with maintenance through authenticated Django admin. JWT can remain later work. Test that anonymous users cannot mutate listings or list/read/update/delete inquiries. See [DRF permission defaults](https://www.django-rest-framework.org/api-guide/permissions/).
+2. **Resolve the complete filter mismatch.** The frontend sends age categories `0-1`, `1-5`, `6+`, including overlapping labels at age 1, and offers `xlarge`, which the model rejects. It also gives “All Countries” the value `estonia`. Agree on age units/boundaries, size values and an empty country value for all countries. Recommended API direction: explicit `age_min`/`age_max` in whole years and repeated sizes (`size=small&size=medium`), preserving existing single-size requests. This is proposed behavior, not implemented behavior; frontend labels must match the chosen boundaries.
+3. **Define listing visibility.** The current dog queryset includes all statuses unless filtered and does not require a verified shelter. Agree whether public search defaults to available dogs and how pending/adopted dogs and unverified shelters appear in both list and detail views.
+4. **Plan the future dog-write serializer.** The nested `shelter` field is read-only, so normal API dog creation cannot provide the required relationship. When self-service is implemented, derive the shelter from the authenticated account and enforce ownership on every operation.
+5. **Keep inquiry promises accurate.** The API stores inquiries but does not send emails. The MVP interface should confirm receipt without claiming the shelter was emailed. Agree on how staff review inquiries during the prototype.
+
+## Suggested implementation order
+
+1. Agree with frontend on origin/port, age and size semantics, country values, listing visibility and the API contract. Preserve the current bare-array list response unless a coordinated change is agreed.
+2. Implement the MVP permission restrictions, CORS configuration and media serving. Keep development media serving separate from the later deployment setup.
+3. Implement agreed filter changes and validation. Add focused tests for boundaries, multiple sizes, invalid values, permission restrictions and the existing inquiry flow.
+4. Connect to the database teammate's PostgreSQL setup using the [database handoff](../Database/README.md); apply migrations and seed data. Verify the selected Django version on a clean environment and run the backend tests against PostgreSQL.
+5. Pair with frontend on search -> dog detail -> inquiry submission. Check loading/empty/error states, invalid input, missing dog IDs and image fallbacks. Compare issue #1's actual acceptance criteria before closing it.
+
+The local prototype is complete when another teammate can start the database and backend from documented setup instructions, browse real database records in the frontend and submit an inquiry that persists, without exposing inquiry records through public read endpoints.
+
+## Later work listed in the PDF
+
+- Shelter JWT authentication, account-to-shelter permissions and self-service listing management.
+- Cross-language breed search and dynamic description translation.
+- Profile-expiry notifications and adoption-status automations.
+- Production hosting and deployment, with tests extended for new endpoints.
+- Users/account model reconciliation with the original schema; reuse or extend Django authentication deliberately.
+
+Coordinate database audit fields, role/naming policy, indexing and eventual archiving with the database teammate. Defer partitioning until data and query evidence justify it. Pricing, hosting provider and other open product decisions in the PDF remain team decisions.

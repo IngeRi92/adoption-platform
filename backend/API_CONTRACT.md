@@ -7,11 +7,56 @@ An API contract tells frontend developers which URL to call, what data to send a
 ## Connection basics
 
 - Local Django base URL: `http://localhost:8000` when started on its default port.
-- Proposed Next.js development origin: `http://localhost:3000`. Confirm the actual origin with frontend; browser calls across origins still need backend CORS configuration.
+- Local Next.js origins allowed by default when `DEBUG=True`: `http://localhost:3000` and `http://127.0.0.1:3000`. Confirm the actual origin with frontend; see the configuration below if its port changes.
 - Use the trailing slash on every endpoint, particularly POST requests.
 - Request JSON with `Accept: application/json`. For JSON submissions, also send `Content-Type: application/json`.
 - These MVP flows do not require user registration or JWT tokens. Public API actions are limited to dog/shelter reads and inquiry creation.
 - Frontend calls Django; it never receives PostgreSQL credentials or connects directly to the database.
+
+## Local CORS setup and browser check
+
+CORS (Cross-Origin Resource Sharing) lets the browser read Django responses from a frontend on a different origin. An origin is the scheme, hostname and port: port 3000 and port 8000 are different origins, even on the same computer. Browser CORS rules do not apply to requests made directly from the Next.js server.
+
+The backend uses `django-cors-headers`. After pulling the change, install dependencies from `backend/` in your activated virtual environment:
+
+```powershell
+python -m pip install -r requirements.txt
+python manage.py runserver
+```
+
+To replace the allowed origins, add this setting to your existing `backend/.env` and restart Django:
+
+```dotenv
+CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+```
+
+Use comma-separated origins with no path or trailing slash. If Next.js starts on port 3001, add its exact origin. An explicitly empty setting allows no cross-origin reads. With `DEBUG=False`, no origins are allowed by default; configure the actual deployed frontend origins explicitly.
+
+CORS headers apply only to `/api/` routes. Allowed browser methods are GET, HEAD, POST and OPTIONS; the API view still decides whether each method exists on a particular endpoint. Cross-origin cookies are not enabled. Public frontend calls should omit `credentials: "include"`; do not use `mode: "no-cors"`, which prevents JavaScript from reading the response. CORS is separate from API authorization, `ALLOWED_HOSTS` and CSRF protection, and is not an anti-spam control.
+
+A browser JSON POST normally triggers an OPTIONS preflight before the actual POST. Django answers with allowed origins, methods and headers. An unapproved origin receives no `Access-Control-Allow-Origin` header: the browser denies access, even if a direct GET request returns status 200. CORS does not generally prevent requests or data changes made by non-browser clients.
+
+Once Next.js is running, open its page at `http://localhost:3000`, open the browser developer console, and run:
+
+```javascript
+fetch("http://localhost:8000/api/dogs/", {
+  headers: { Accept: "application/json" },
+}).then(async (response) => console.log(response.status, await response.json()));
+```
+
+Expect `200` and an array. In the Network tab, the response should include `Access-Control-Allow-Origin: http://localhost:3000`. To check preflight and readable validation errors without saving an inquiry:
+
+```javascript
+fetch("http://localhost:8000/api/inquiries/", {
+  method: "POST",
+  headers: { "Content-Type": "application/json", Accept: "application/json" },
+  body: JSON.stringify({ user_email: "invalid", message: "" }),
+}).then(async (response) => console.log(response.status, await response.json()));
+```
+
+Expect a successful OPTIONS preflight (unless cached), followed by `400` with field errors. The existing inquiry payload below can be used for a successful submission with a real dog ID. Automated backend tests cover CORS headers, preflight, allowed and unapproved origins, successful persistence and readable errors. Actual Next.js browser integration remains to be checked together.
+
+Reference: [django-cors-headers setup and configuration](https://github.com/adamchainz/django-cors-headers).
 
 ## Supported integration endpoints
 
@@ -154,7 +199,7 @@ The baseline above is documented. These extensions and policy choices are **not 
 
 | Decision | Recommendation to review |
 | --- | --- |
-| Local origin | Next.js on `http://localhost:3000`, Django on `http://localhost:8000`; allow the actual frontend origin in CORS |
+| Local origin | CORS now allows local Next.js on port 3000 in development; confirm the frontend's actual address and override the allowlist if needed |
 | Age search | Add inclusive `age_min` / `age_max` in whole years; change UI categories to non-overlapping boundaries, for example 0–1, 2–5, 6+ |
 | Multiple sizes | Accept repeated values such as `size=small&size=medium`, matching either size |
 | Extra-large size | Keep the existing three values for MVP and remove `xlarge` from the UI unless the team chooses a schema extension |
@@ -170,7 +215,8 @@ Frontend should implement the supported baseline or use sample data for controls
 - [x] Compare the baseline with the supplied frontend integration issue.
 - [ ] Frontend/backend review the proposed decisions together.
 - [x] Restrict public API actions and test blocked requests, public reads and inquiry persistence on SQLite.
-- [ ] Configure CORS and media serving and verify PostgreSQL integration.
+- [x] Configure API CORS and test preflight, origin restrictions, success and error responses.
+- [ ] Configure media serving and verify PostgreSQL integration.
 - [ ] Verify search -> detail -> inquiry against the Next.js frontend and PostgreSQL.
 
 Code references: [views](shelters/views.py), [serializers](shelters/serializers.py), [models](shelters/models.py), [routes](shelters/urls.py). Remaining work: [backend plan](BACKEND_PLAN.md).

@@ -39,6 +39,19 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 
+# Browser origins that may read API responses. An origin has no path or trailing slash.
+CORS_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv(
+        "CORS_ALLOWED_ORIGINS",
+        "http://localhost:3000,http://127.0.0.1:3000" if DEBUG else "",
+    ).split(",")
+    if origin.strip()
+]
+CORS_URLS_REGEX = r"^/api/.*$"
+CORS_ALLOW_METHODS = ["GET", "HEAD", "POST", "OPTIONS"]
+CORS_ALLOW_CREDENTIALS = False
+
 
 # Application definition
 
@@ -50,10 +63,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "corsheaders",
     "shelters",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",

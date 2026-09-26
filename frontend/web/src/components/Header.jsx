@@ -4,7 +4,7 @@ import Link from "next/link";
 // Nav items without a page yet still point to "#".
 export default function Header() {
   return (
-    <header className="w-full relative mt-[0.2rem] bg-warm-white border-y-[0.2rem] border-powder-blue shadow-[0_-0.2rem_0_#38584F,0_0.2rem_0_#38584F] h-[3.6rem] z-[1]">
+    <header className="w-full relative overflow-x-clip mt-[0.2rem] bg-warm-white border-y-[0.2rem] border-powder-blue shadow-[0_-0.2rem_0_#38584F,0_0.2rem_0_#38584F] h-[3.6rem] z-[1]">
       <div className="max-w-[75rem] mx-auto flex items-center justify-between relative h-full px-4 sm:px-6 lg:px-8">
         {/* Logo */}
     <div
@@ -25,7 +25,7 @@ export default function Header() {
 
         {/* Nav */}
         <nav className="flex-grow flex justify-center pl-[3rem]" role="navigation" aria-label="Main navigation">
-          <ul className="flex gap-4 items-center list-none m-0 p-0">
+          <ul className="flex items-center gap-4 p-0 m-0 list-none">
             <li><Link href="/" className="font-semibold uppercase text-soft-dark-purple text-[1.3rem] leading-[1.2] px-[0.4rem] py-[0.1rem] flex items-center transition-all duration-300 rounded hover:bg-muted-teal focus-visible:bg-muted-teal hover:text-white focus-visible:text-white hover:-translate-y-[0.0625rem] focus-visible:-translate-y-[0.0625rem]">🏠Home</Link></li>
 
             <li><a href="#" className="font-semibold uppercase text-soft-dark-purple text-[1.3rem] leading-[1.2] px-[0.4rem] py-[0.1rem] flex items-center transition-all duration-300 rounded ml-[-0.4rem] hover:bg-muted-teal focus-visible:bg-muted-teal hover:text-white focus-visible:text-white">🐾 <span className="ml-1">Our Mission</span></a></li>
@@ -59,53 +59,48 @@ export default function Header() {
         <div className="absolute top-1/2 right-[-2.5rem] transform -translate-y-1/2 flex items-center justify-center z-10 group">
 
           {/* Trigger button */}
-          <button className="bg-none border-none cursor-pointer p-0 pr-4 h-full flex items-center" aria-haspopup="true" aria-expanded="false">
+          <button className="flex items-center h-full p-0 pr-4 border-none cursor-pointer bg-none" aria-haspopup="true" aria-expanded="false">
             <span className="block h-[2.1rem] aspect-[3/2] overflow-hidden rounded border-[0.14rem] border-light-chestnut">
-              <img src="/images/English.svg" alt="English" className="h-full w-full object-cover block" />
+              <img src="/images/English.svg" alt="English" className="block object-cover w-full h-full" />
             </span>
           </button>
 
           {/* Dropdown menu */}
           <ul
-            className="absolute top-full right-0 mt-0 translate-y-0
-                  py-2 bg-warm-white border border-light-gray rounded-lg shadow-lg list-none z-50
-                  invisible opacity-0 pointer-events-none
-                  group-hover:visible group-hover:opacity-100 group-hover:pointer-events-auto
-                  hover:visible hover:opacity-100 hover:pointer-events-auto
-                  transition-opacity transition-transform duration-150"
+            className="absolute right-0 z-50 invisible py-2 mt-0 list-none transition-opacity transition-transform duration-150 translate-y-0 border rounded-lg shadow-lg opacity-0 pointer-events-none top-full bg-warm-white border-light-gray group-hover:visible group-hover:opacity-100 group-hover:pointer-events-auto hover:visible hover:opacity-100 hover:pointer-events-auto"
           >
             <li className="px-4 py-1">
               <a href="#">
                 <span className="block h-8 aspect-[3/2] overflow-hidden rounded border-[0.07rem] border-gray-900 hover:scale-110 transition-transform">
-                  <img src="/images/Estonia.svg" alt="Estonia" className="h-full w-full object-cover block" />
+                  <img src="/images/Estonia.svg" alt="Estonia" className="block object-cover w-full h-full" />
                 </span>
               </a>
             </li>
             <li className="px-4 py-1">
               <a href="#">
                 <span className="block h-8 aspect-[3/2] overflow-hidden rounded border-[0.07rem] border-gray-900 hover:scale-110 transition-transform">
-                  <img src="/images/Sweden.svg" alt="Svenska" className="h-full w-full object-cover block" />
+                  <img src="/images/Sweden.svg" alt="Svenska" className="block object-cover w-full h-full" />
                 </span>
               </a>
             </li>
             <li className="px-4 py-1">
               <a href="#">
                 <span className="block h-8 aspect-[3/2] overflow-hidden rounded border-[0.07rem] border-gray-900 hover:scale-110 transition-transform">
-                  <img src="/images/Norway.svg" alt="Norsk" className="h-full w-full object-cover block" />
+                  <img src="/images/Norway.svg" alt="Norsk" className="block object-cover w-full h-full" />
                 </span>
               </a>
             </li>
             <li className="px-4 py-1">
               <a href="#">
                 <span className="block h-8 aspect-[3/2] overflow-hidden rounded border-[0.07rem] border-gray-900 hover:scale-110 transition-transform">
-                  <img src="/images/Finland.svg" alt="Suomi" className="h-full w-full object-cover block" />
+                  <img src="/images/Finland.svg" alt="Suomi" className="block object-cover w-full h-full" />
                 </span>
               </a>
             </li>
             <li className="px-4 py-1">
               <a href="#">
                 <span className="block h-8 aspect-[3/2] overflow-hidden rounded border-[0.07rem] border-gray-900 hover:scale-110 transition-transform">
-                  <img src="/images/Denmark.svg" alt="Dansk" className="h-full w-full object-cover block" />
+                  <img src="/images/Denmark.svg" alt="Dansk" className="block object-cover w-full h-full" />
                 </span>
               </a>
             </li>

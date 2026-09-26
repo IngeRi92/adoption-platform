@@ -37,14 +37,14 @@ export default async function SearchPage({ searchParams }) {
       {dogs.length === 0 ? (
         <p className="text-dark-brown py-[2rem] text-center text-[1.1rem]">
           No dogs match your search.{" "}
-          <Link href="/" className="text-soft-dark-purple font-semibold underline">
+          <Link href="/" className="font-semibold underline text-soft-dark-purple">
             Try different filters
           </Link>
         </p>
       ) : (
         <section
           aria-labelledby="dog-results-heading"
-          className="mx-auto grid [grid-template-columns:repeat(auto-fit,minmax(10rem,1fr))] gap-[0.8rem] px-[0.3rem] py-[1rem]"
+          className="mx-auto grid [grid-template-columns:repeat(auto-fill,minmax(10rem,1fr))] gap-[0.8rem] px-[0.3rem] py-[1rem]"
         >
           {dogs.map((dog) => (
             <DogCard key={dog.id} dog={dog} />

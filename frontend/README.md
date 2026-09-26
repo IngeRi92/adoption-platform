@@ -31,19 +31,19 @@ I developed the frontend step by step so I could learn the technology along the 
 | `1-html-css/` | The original design in plain HTML and CSS: structure, content, layout, spacing, fonts, colours |
 | `2-tailwind/` | The same design rebuilt with Tailwind CSS. This is the design reference for the Next.js version |
 | `3-javascript/` | Placeholder (empty); JavaScript and React are learned directly in the Next.js version |
-| `4-nextjs/` | The Next.js app — the version that will go live |
+| `web/` | The Next.js app — the version that will go live |
 
 Separate pages for each menu item (Our Mission, Dog Tips & Info, etc.) will be added after the MVP.
 
-## Frontend (Next.js) — `frontend/4-nextjs`
+## Frontend app (Next.js) — `frontend/web`
 
 The Next.js version of the frontend, ported from the static Tailwind design in `frontend/2-tailwind` (issue #2).
 
 ### Tech stack
 
-- Next.js 16.3.6 (App Router, Turbopack)
+- Next.js 16.3.6 (App Router, Turbopack, `src/` folder)
 - React, JavaScript (no TypeScript)
-- Tailwind CSS v4 — theme colours and animations are in `app/globals.css` (moved from `2-tailwind/2-src/input.css`; no `tailwind.config.js` needed)
+- Tailwind CSS v4 — theme colours and animations are in `src/app/globals.css` (moved from `2-tailwind/2-src/input.css`; no `tailwind.config.js` needed)
 - ESLint
 - Fonts via `next/font`: Poppins (main font) and Kalam (dog names)
 
@@ -51,40 +51,41 @@ The Next.js version of the frontend, ported from the static Tailwind design in `
 
 - Node.js 24 LTS (developed with 24.19.0). Check with `node -v`.
 
-### Run locally
+### Commands
 
-Run these commands from `frontend/4-nextjs`:
+Run these from `frontend/web`:
 
-```bash
-npm install
-npm run dev
-```
-
-Open http://localhost:3000. Stop the server with `Ctrl + C`.
-
-Code check: `npm run lint` (warnings about `<img>` are expected for now).
+| Command | What it does |
+|---|---|
+| `npm ci` | Install the exact dependency versions from `package-lock.json` |
+| `npm run dev` | Start the development server at http://localhost:3000 (stop with `Ctrl + C`) |
+| `npm run build` | Create a production build and check for errors |
+| `npm run start` | Run the production build locally (after `npm run build`) |
+| `npm run lint` | Check the code with ESLint (warnings about `<img>` are expected for now) |
 
 ### Data
 
-For now the app uses sample data from `data/sampleDogs.js`, with field names matching `backend/API_CONTRACT.md`. Connecting to the Django API comes in issue #1.
+This is a preview with sample data from `src/data/sampleDogs.js`. The field names match `backend/API_CONTRACT.md`, and the search filters are applied to the sample dogs. Connecting to the Django API comes in issue #1.
+
+Online adoption inquiries are not available in the preview; the dog page shows the shelter's contact details and a note instead.
 
 ### Pages
 
 | URL | Page |
 |---|---|
 | `/` | Home with the dog search form |
-| `/search?sex=female&size=small` | Search results (filters are in the URL) |
-| `/dogs/[id]` | Dog detail page |
+| `/dogs` | Search results; filters are in the URL, e.g. `/dogs?sex=female&size=small` |
+| `/dogs/[id]` | Dog detail page, e.g. `/dogs/1` (unknown IDs show "Dog not found") |
 | `/upload` | Placeholder — shelter login and uploads come after the MVP |
 
 ### Folder structure
 
 | Folder | Contents |
 |---|---|
-| `app/` | Pages, layout, global styles, favicon |
-| `components/` | Header, Footer, SearchForm, DogCard, DogImage |
-| `data/` | Sample dog data |
-| `lib/` | Search filters, data access, formatting helpers |
+| `src/app/` | Pages, layout, global styles, favicon |
+| `src/components/` | Header, Footer, SearchForm, DogCard, DogImage |
+| `src/data/` | Sample dog data |
+| `src/lib/` | Search filters, data access, formatting helpers |
 | `public/images/` | Images copied from `2-tailwind/4-images` |
 
 ### Changes from the static version (search form and fixes)
@@ -95,9 +96,10 @@ For now the app uses sample data from `data/sampleDogs.js`, with field names mat
 - The Keyword field searches by breed
 - ID Number search is hidden until #5 decides on an ID field
 - The header's unclosed `<div>` is fixed and the Kalam font is now actually loaded
+- The header no longer makes the page wider than the screen on phones
 
 ### Notes
 
 - `next.config.mjs` sets `turbopack.root`, because the main project folder has its own `package-lock.json` and Next.js otherwise picks the wrong root folder.
 - `create-next-app` also added `AGENTS.md` and `CLAUDE.md` (guidance for AI coding assistants).
-- Not yet mobile-friendly: the header menu overflows on small screens. This is planned for the UI/UX redesign after the MVP pages work.
+- Not yet fully mobile-friendly: the pages fit the phone screen, but the header menu is cut off on small screens. This is planned for the UI/UX redesign.

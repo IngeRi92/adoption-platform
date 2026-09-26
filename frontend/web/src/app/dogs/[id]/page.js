@@ -77,7 +77,7 @@ export default async function DogPage({ params }) {
         </p>
       </section>
 
-      {/* Contact */}
+            {/* Contact */}
       <section id="contact" className="text-dark-grape pb-[0.4rem] leading-[1.6]">
         <h2 className="text-dark-grape text-[1.1em] font-semibold">Contact ✨</h2>
         {shelter.name && (
@@ -89,10 +89,7 @@ export default async function DogPage({ params }) {
         {shelter.contact_email && (
           <p>
             <strong className="font-semibold">Email:</strong>{" "}
-            <a
-              href={`mailto:${shelter.contact_email}`}
-              className="text-[1rem] font-normal text-black hover:underline"
-            >
+            <a href={`mailto:${shelter.contact_email}`} className="text-[1rem] font-normal text-black hover:underline">
               {shelter.contact_email}
             </a>
           </p>
@@ -100,10 +97,7 @@ export default async function DogPage({ params }) {
         {shelter.contact_phone && (
           <p>
             <strong className="font-semibold">Phone:</strong>{" "}
-            <a
-              href={`tel:${shelter.contact_phone.replace(/\s/g, "")}`}
-              className="text-[1rem] font-normal text-black hover:underline"
-            >
+            <a href={`tel:${shelter.contact_phone.replace(/\s/g, "")}`} className="text-[1rem] font-normal text-black hover:underline">
               {shelter.contact_phone}
             </a>
           </p>
@@ -112,7 +106,7 @@ export default async function DogPage({ params }) {
 
       {/* Buttons */}
       <div className="mt-[0.3rem] mb-[0.3rem] flex flex-wrap items-center gap-[1rem]">
-        {/* Issue #1: change href to "#inquiry" when the inquiry form is added */}
+        {/* Issue #1: change href to "#inquiry" when the inquiry form is added, and remove the preview note below */}
         <a href="#contact" className="text-medium-salmon bg-soft-peach border-medium-salmon relative inline-flex items-center justify-center gap-[0.3rem] overflow-hidden rounded-[7rem] border-[0.1875rem] px-[0.5rem] py-[0.3rem] text-[1.1rem] leading-[1.2] font-extrabold tracking-[0.08rem] uppercase no-underline shadow-[inset_0.1875rem_0.1875rem_0.375rem_rgba(255,255,255,0.85),inset_-0.1875rem_-0.1875rem_0.5rem_rgba(0,0,0,0.08),0_0.25rem_0.5rem_rgba(0,0,0,0.3),0_0.625rem_1.25rem_rgba(233,155,155,0.4),0_0_1rem_rgba(255,200,200,0.2)] transition-transform duration-200 ease-in-out before:absolute before:inset-[-0.25rem] before:-z-10 before:rounded-[7rem] before:border-[0.125rem] before:[border-color:rgba(255,255,255,0.4)] before:shadow-[0_0_0.75rem_rgba(255,255,255,0.4),inset_0_0_0.75rem_rgba(233,155,155,0.25)] before:content-[''] hover:-translate-y-[0.125rem] focus-visible:-translate-y-[0.125rem] hover:scale-[1.08] focus-visible:scale-[1.08] hover:shadow-[inset_0.1875rem_0.1875rem_0.375rem_rgba(255,255,255,0.85),inset_-0.1875rem_-0.1875rem_0.5rem_rgba(0,0,0,0.1),0_0.5rem_1rem_rgba(0,0,0,0.35),0_0.75rem_1.5rem_rgba(233,155,155,0.5)] focus-visible:shadow-[inset_0.1875rem_0.1875rem_0.375rem_rgba(255,255,255,0.85),inset_-0.1875rem_-0.1875rem_0.5rem_rgba(0,0,0,0.1),0_0.5rem_1rem_rgba(0,0,0,0.35),0_0.75rem_1.5rem_rgba(233,155,155,0.5)]">
           <span className="text-medium-salmon animate-glowGold">Offer Home❤️</span>
         </a>
@@ -120,6 +114,11 @@ export default async function DogPage({ params }) {
           <span className="text-medium-salmon animate-glowGold">Donate❤️</span>
         </a>
       </div>
+
+      {/* Preview note: inquiries are connected in issue #1 */}
+      <p className="text-medium-brown mt-[0.3rem] text-[0.9rem]">
+        Online adoption inquiries are not available in this preview yet. Please contact the shelter using the details above.
+      </p>
     </main>
   );
 }

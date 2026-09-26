@@ -28,7 +28,7 @@ export default function SearchForm() {
   return (
     <div className="relative ml-[0.5rem] flex-1">
       <Form
-        action="/search"
+        action="/dogs"
         className="relative flex flex-wrap items-start justify-start gap-x-0 gap-y-[1rem] overflow-visible pr-0"
       >
         {/* Sex */}

@@ -9,7 +9,7 @@ export default function DogNotFound() {
       <p className="text-dark-brown mb-[1rem]">
         This dog may already have found a home, or the link is wrong.
       </p>
-      <Link href="/search" className="text-soft-dark-purple font-semibold underline">
+      <Link href="/dogs" className="font-semibold underline text-soft-dark-purple">
         Back to all dogs
       </Link>
     </main>
